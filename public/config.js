@@ -1,7 +1,8 @@
 // Coin config. Dynamically updated via /pukinginamo admin portal
-window.PINKY = {
-  ticker: 'PINKY',
+window.TITS = {
+  ticker: 'TITS',
   ca: '',
   buyUrl: '',
-  twitterUrl: 'https://x.com/pinkydotfun',
+  twitterUrl: 'https://x.com/titsdotfun',
 };
+window.PINKY = window.TITS;

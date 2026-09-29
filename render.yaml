@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: pinky-fun
+    name: tits-fun
     env: node
     plan: free
     buildCommand: npm install

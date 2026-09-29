@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>PINKY Admin | CA Control Panel</title>
+  <title>TITS Admin | CA Control Panel</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -122,7 +122,7 @@
 </head>
 <body>
   <header class="bar">
-    <a class="brand" href="/"><img src="/logo.png" alt="PINKY" width="32" height="32">PINKY Admin</a>
+    <a class="brand" href="/"><img src="/logo.png" alt="TITS" width="32" height="32">TITS Admin</a>
     <nav class="links">
       <a class="pill" href="/">← Back to Site</a>
       <button class="pill" id="adminConnectBtn" type="button"><img src="/phantom.svg" alt="" width="16" height="16"><span id="adminWalletLabel">Connect Phantom</span></button>
@@ -163,7 +163,7 @@
 
           <div class="field-group">
             <label for="twitterInput">Twitter / X URL</label>
-            <input id="twitterInput" placeholder="https://x.com/pinkydotfun" spellcheck="false" autocomplete="off">
+            <input id="twitterInput" placeholder="https://x.com/titsdotfun" spellcheck="false" autocomplete="off">
             <p class="helper">The official Twitter/X account link displayed in the navigation.</p>
           </div>
 
@@ -266,7 +266,7 @@
           return;
         }
 
-        const message = 'Sign in to PINKY Admin Panel\n\nAuthorize Contract Address updates.\n\nWallet: ' + wallet + '\nTime: ' + new Date().toISOString();
+        const message = 'Sign in to TITS Admin Panel\n\nAuthorize Contract Address updates.\n\nWallet: ' + wallet + '\nTime: ' + new Date().toISOString();
         const { signature } = await p.signMessage(new TextEncoder().encode(message), 'utf8');
 
         const res = await fetch('/api/admin/auth', {
@@ -283,6 +283,7 @@
         if (!res.ok) throw new Error(data.error || 'Authentication failed');
 
         adminToken = data.token;
+        sessionStorage.setItem('tits:admin_token', adminToken);
         sessionStorage.setItem('pinky:admin_token', adminToken);
 
         $('lockedView').hidden = true;
@@ -342,7 +343,7 @@
     };
 
     // Auto reconnect if session exists
-    const savedToken = sessionStorage.getItem('pinky:admin_token');
+    const savedToken = sessionStorage.getItem('tits:admin_token') || sessionStorage.getItem('pinky:admin_token');
     if (savedToken) {
       adminToken = savedToken;
       fetch('/api/admin/config', { headers: { 'x-admin-token': adminToken } })
@@ -354,6 +355,7 @@
             $('adminConnectBtn').classList.add('on');
             loadCurrentConfig();
           } else {
+            sessionStorage.removeItem('tits:admin_token');
             sessionStorage.removeItem('pinky:admin_token');
           }
         })

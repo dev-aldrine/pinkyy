@@ -1,6 +1,6 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const cfg = window.PINKY || {};
+  const cfg = window.TITS || window.PINKY || {};
   const POLL_MS = 4000;
   const PAGE = 60;
 
@@ -49,8 +49,8 @@
   let adminToken = '';
   try {
     const q = new URLSearchParams(location.search).get('admin');
-    if (q) { localStorage.setItem('pinky:admin', q); history.replaceState(null, '', location.pathname); }
-    adminToken = localStorage.getItem('pinky:admin') || '';
+    if (q) { localStorage.setItem('tits:admin', q); history.replaceState(null, '', location.pathname); }
+    adminToken = localStorage.getItem('tits:admin') || localStorage.getItem('pinky:admin') || '';
   } catch {}
   let isAdmin = false;
   if (adminToken) {
@@ -70,7 +70,7 @@
   function setCount(n) {
     total = n;
     $('count').textContent = n.toLocaleString();
-    $('countWord').textContent = n === 1 ? 'pinky' : 'pinkies';
+    $('countWord').textContent = n === 1 ? 'post' : 'tits';
     $('empty').hidden = n > 0;
   }
 
@@ -82,7 +82,7 @@
     b.textContent = '✕';
     b.onclick = async (e) => {
       e.stopPropagation();
-      if (!confirm('Delete this pinky?')) return;
+      if (!confirm('Delete this post?')) return;
       const r = await fetch(`/api/posts/${tile.dataset.id}`, { method: 'DELETE', headers: { 'x-admin-token': adminToken } });
       if (r.ok) { tile.remove(); seen.delete(tile.dataset.id); setCount(Math.max(0, total - 1)); } else toast('Delete failed');
     };
@@ -96,7 +96,7 @@
     tile.dataset.id = p.id;
     tile.style.setProperty('--tilt', ((p.n || 0) % 2 ? 2 : -2) + 'deg');
     const img = new Image();
-    img.alt = 'A pinky';
+    img.alt = 'tits';
     img.loading = 'lazy';
     img.decoding = 'async';
     img.onload = () => img.classList.add('in');
@@ -133,7 +133,7 @@
 
   async function fetchPage(before) {
     const r = await fetch(`/api/posts?limit=${PAGE}${before ? `&before=${before}` : ''}`);
-    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || 'Could not load pinkies');
+    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || 'Could not load posts');
     return r.json();
   }
 
@@ -177,7 +177,7 @@
   // ---------- viewer ----------
   function openViewer(p) {
     $('viewerImg').src = p.url || p.small;
-    $('viewerNum').textContent = p.n ? `pinky #${p.n}` : '';
+    $('viewerNum').textContent = p.n ? `#${p.n}` : '';
     const tw = $('viewerTweet');
     tw.hidden = !(p.tweet && cfg.twitterUrl);
     if (!tw.hidden) tw.href = `${cfg.twitterUrl.replace(/\/$/, '')}/status/${p.tweet}`;
@@ -201,7 +201,7 @@
     video.hidden = review;
     $('guide').style.display = review ? 'none' : '';
     $('hint').hidden = review;
-    $('camTitle').textContent = review ? 'Looking good?' : 'Show us your pinky';
+    $('camTitle').textContent = review ? 'Looking good?' : 'Show us your tits';
     $('reject').hidden = true;
     $('checking').hidden = true;
     $('send').hidden = false;
@@ -359,11 +359,11 @@
     if (!looksLikeWallet(payTo)) {
       $('walletInput').classList.add('bad');
       $('walletInput').focus();
-      $('reject').textContent = 'Add your Solana wallet address so your pinky can get paid if it wins.';
+      $('reject').textContent = 'Add your Solana wallet address so your post can get paid if it wins.';
       $('reject').hidden = false;
       return;
     }
-    try { localStorage.setItem('pinky:payto', payTo); } catch {}
+    try { localStorage.setItem('tits:payto', payTo); } catch {}
     const btn = $('send');
     btn.disabled = true;
     $('retake').disabled = true;
@@ -374,8 +374,8 @@
       const small = squareCanvas(captured, captured.width, captured.height, Math.min(400, captured.width), false);
       const [image, smallBlob] = await Promise.all([toJpeg(captured, 0.85), toJpeg(small, 0.8)]);
       const form = new FormData();
-      form.append('image', image, 'pinky.jpg');
-      form.append('small', smallBlob, 'pinky.sm.jpg');
+      form.append('image', image, 'tits.jpg');
+      form.append('small', smallBlob, 'tits.sm.jpg');
       form.append('wallet', payTo);
       const r = await fetch('/api/posts', { method: 'POST', body: form, headers: session.token ? { 'x-session': session.token } : {} });
       const d = await r.json().catch(() => ({}));
@@ -387,7 +387,7 @@
       setCount(total + 1);
       closeCam();
       window.scrollTo({ top: wall.offsetTop - 80, behavior: 'smooth' });
-      toast(`You're pinky #${d.post.n}!`);
+      toast(`You're #${d.post.n}!`);
     } catch (err) {
       toast(err.message, 4000);
     } finally {
@@ -400,10 +400,10 @@
 
   // ---------- wallet (Phantom sign-in) ----------
   const session = { token: '', wallet: '', nextVoteAt: 0 };
-  try { Object.assign(session, JSON.parse(localStorage.getItem('pinky:session') || '{}')); } catch {}
+  try { Object.assign(session, JSON.parse(localStorage.getItem('tits:session') || localStorage.getItem('pinky:session') || '{}')); } catch {}
   const short = (w) => (w ? w.slice(0, 4) + '…' + w.slice(-4) : '');
   const looksLikeWallet = (w) => /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(w || '');
-  const saveSession = () => { try { localStorage.setItem('pinky:session', JSON.stringify(session)); } catch {} };
+  const saveSession = () => { try { localStorage.setItem('tits:session', JSON.stringify(session)); } catch {} };
   const getPhantomProvider = () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null);
 
   function paintWallet() {
@@ -421,7 +421,7 @@
     } else {
       input.hidden = false;
       $('walletConnected').hidden = true;
-      try { input.value ||= localStorage.getItem('pinky:payto') || ''; } catch {}
+      try { input.value ||= localStorage.getItem('tits:payto') || localStorage.getItem('pinky:payto') || ''; } catch {}
     }
   }
   $('walletInput').oninput = () => $('walletInput').classList.remove('bad');
@@ -440,7 +440,7 @@
     try {
       const { publicKey } = await p.connect();
       const wallet = publicKey.toString();
-      const message = 'Sign in to PINKY\n\nThis only proves you own this wallet. It costs nothing and sends nothing.\n\nWallet: ' + wallet + '\nTime: ' + new Date().toISOString();
+      const message = 'Sign in to TITS\n\nThis only proves you own this wallet. It costs nothing and sends nothing.\n\nWallet: ' + wallet + '\nTime: ' + new Date().toISOString();
       const { signature } = await p.signMessage(new TextEncoder().encode(message), 'utf8');
       const r = await fetch('/api/auth', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ wallet, message, signature: btoa(String.fromCharCode(...signature)) }) });
       const d = await r.json();
@@ -472,7 +472,7 @@
   async function castVote(p) {
     if (voting) return;
     if (!session.token && !(await connect())) return;
-    if (p.w === session.wallet) return toast("You can't vote for your own pinky.");
+    if (p.w === session.wallet) return toast("You can't vote for your own post.");
     voting = true;
     try {
       const r = await fetch('/api/vote', { method: 'POST', headers: { 'content-type': 'application/json', 'x-session': session.token }, body: JSON.stringify({ id: p.id }) });
@@ -480,7 +480,7 @@
       if (r.status === 401 && d.needAuth) { disconnect(); return toast('Please connect again.'); }
       if (d.nextVoteAt) { session.nextVoteAt = d.nextVoteAt; saveSession(); paintMyVote(); }
       if (!r.ok) return toast(d.error || 'Vote failed', 3500);
-      toast('Voted for pinky #' + p.n + ' (' + d.votes + (d.votes === 1 ? ' vote' : ' votes') + ' this round)');
+      toast('Voted for #' + p.n + ' (' + d.votes + (d.votes === 1 ? ' vote' : ' votes') + ' this round)');
       loadBoard(true);
     } catch { toast('Vote failed. Try again.'); } finally { voting = false; }
   }
@@ -519,8 +519,8 @@
     ol.innerHTML = '';
     d.top.forEach((p, i) => {
       const li = document.createElement('li');
-      li.innerHTML = '<span class="rk">' + (i + 1) + '</span><img alt="pinky" src="' + esc(p.small || p.url) + '">' +
-        '<div class="who"><b>pinky #' + p.n + (i === 0 ? '<span class="lead">Winning</span>' : '') + '</b><span>' + votesWord(p.votes) + ' · ' + short(p.w) + '</span></div>' +
+      li.innerHTML = '<span class="rk">' + (i + 1) + '</span><img alt="tits" src="' + esc(p.small || p.url) + '">' +
+        '<div class="who"><b>#' + p.n + (i === 0 ? '<span class="lead">Winning</span>' : '') + '</b><span>' + votesWord(p.votes) + ' · ' + short(p.w) + '</span></div>' +
         '<div class="vc">' + p.votes + '<small>' + (p.votes === 1 ? 'vote' : 'votes') + '</small></div>';
       const b = document.createElement('button');
       b.className = 'vote-btn';
@@ -543,7 +543,7 @@
       else if (w.status === 'rolled') amt = '<small>Pot rolled over</small>';
       else if (w.status === 'paused') amt = '<small>Paused</small>';
       else amt = '<small>Not paid</small>';
-      return '<li><img alt="" src="' + esc(w.small || w.url) + '"><div class="w-main"><b>pinky #' + w.n + '</b><span>' + t + ' · ' + votesWord(w.votes) + ' · ' + short(w.w) + '</span></div><div class="w-amt">' + amt + '</div></li>';
+      return '<li><img alt="" src="' + esc(w.small || w.url) + '"><div class="w-main"><b>#' + w.n + '</b><span>' + t + ' · ' + votesWord(w.votes) + ' · ' + short(w.w) + '</span></div><div class="w-amt">' + amt + '</div></li>';
     }).join('');
   }
   async function loadBoard(fresh) {

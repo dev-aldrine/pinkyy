@@ -1,7 +1,7 @@
 {
-  "name": "pinky-fun",
+  "name": "tits-fun",
   "version": "1.0.0",
-  "description": "PINKY - Post your pinky. Everyone's pinky on one wall. $PINKY",
+  "description": "tits - Post your tits. Everyone's tits on one wall. $TITS",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
