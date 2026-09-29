@@ -191,6 +191,7 @@
   <div class="toast" id="toast" hidden></div>
 
   <script>
+  (() => {
     const AUTHORIZED_WALLET = '61SRJwucN5iBHemrBTNEqkXAJHNgjTN16Nt1SVFBNJuf';
     const $ = (id) => document.getElementById(id);
     let adminToken = '';
@@ -212,7 +213,7 @@
       banner.hidden = false;
     }
 
-    const phantom = () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null);
+    const getPhantomProvider = () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null);
 
     async function loadCurrentConfig() {
       try {
@@ -239,7 +240,7 @@
     }
 
     async function verifyAndLogin() {
-      const p = phantom();
+      const p = getPhantomProvider();
       $('authError').hidden = true;
 
       if (!p) {
@@ -355,6 +356,7 @@
         })
         .catch(() => {});
     }
+  })();
   </script>
 </body>
 </html>

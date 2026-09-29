@@ -404,7 +404,7 @@
   const short = (w) => (w ? w.slice(0, 4) + '…' + w.slice(-4) : '');
   const looksLikeWallet = (w) => /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(w || '');
   const saveSession = () => { try { localStorage.setItem('pinky:session', JSON.stringify(session)); } catch {} };
-  const phantom = () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null);
+  const getPhantomProvider = () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null);
 
   function paintWallet() {
     $('connectLabel').textContent = session.wallet ? short(session.wallet) : 'Connect';
@@ -427,7 +427,7 @@
   $('walletInput').oninput = () => $('walletInput').classList.remove('bad');
 
   async function connect() {
-    const p = phantom();
+    const p = getPhantomProvider();
     if (!p) {
       if (matchMedia('(hover: none) and (pointer: coarse)').matches) {
         location.href = 'https://phantom.app/ul/browse/' + encodeURIComponent(location.href) + '?ref=' + encodeURIComponent(location.origin);
