@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: pinky-fun
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/board
+    envVars:
+      - key: NODE_VERSION
+        value: 20.0.0
+      - key: PORT
+        value: 3000
+      - key: IMAGEKIT_PUBLIC_KEY
+        value: public_nJ2l/4XG5Z2rgVvL+xKrV7bm76E=
+      - key: IMAGEKIT_PRIVATE_KEY
+        value: private_11kmxslj7hVkNxTI/8611rSmSVg=
+      - key: IMAGEKIT_URL_ENDPOINT
+        value: https://ik.imagekit.io/joysfairycharms
+      - key: ADMIN_TOKEN
+        generateValue: true

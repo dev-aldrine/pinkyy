@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PINKY Admin | CA Control Panel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .admin-container {
+      max-width: 680px;
+      margin: 40px auto;
+      padding: 0 20px 60px;
+    }
+    .admin-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    .admin-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #fff0f5;
+      color: #e84370;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      border: 1px solid #ffd1dc;
+    }
+    .auth-gate {
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .auth-gate h2 {
+      margin-bottom: 8px;
+    }
+    .auth-gate p {
+      color: var(--muted);
+      margin-bottom: 24px;
+      font-size: 15px;
+    }
+    .allowed-wallet {
+      display: inline-block;
+      font-family: ui-monospace, monospace;
+      background: var(--soft);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      margin: 10px 0 20px;
+      word-break: break-all;
+    }
+    .field-group {
+      margin-bottom: 22px;
+    }
+    .field-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .field-group .helper {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .field-group input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0 16px;
+      font: 14px ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--fg);
+      background: #fff;
+      outline: none;
+      transition: border-color .15s ease;
+    }
+    .field-group input:focus {
+      border-color: var(--fg);
+    }
+    .status-banner {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-banner.success {
+      background: #ecfdf3;
+      color: #027a48;
+      border: 1px solid #a6f4c5;
+    }
+    .status-banner.error {
+      background: #fef3f2;
+      color: #b42318;
+      border: 1px solid #fecdca;
+    }
+    .preview-box {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 24px;
+      font-size: 14px;
+    }
+    .preview-box b {
+      display: block;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <a class="brand" href="/"><img src="/logo.png" alt="PINKY" width="32" height="32">PINKY Admin</a>
+    <nav class="links">
+      <a class="pill" href="/">← Back to Site</a>
+      <button class="pill" id="adminConnectBtn" type="button"><img src="/phantom.svg" alt="" width="16" height="16"><span id="adminWalletLabel">Connect Phantom</span></button>
+    </nav>
+  </header>
+
+  <main class="admin-container">
+    <div class="admin-card">
+      <div class="admin-badge">Admin Gateway</div>
+      
+      <!-- Wallet Gate Locked View -->
+      <div id="lockedView" class="auth-gate">
+        <h2>Wallet Gated Control Panel</h2>
+        <p>Connect the authorized owner wallet to manage the live Contract Address (CA) and token configuration.</p>
+        <div>
+          <span style="font-size: 13px; color: var(--muted); font-weight: 600;">Authorized Owner Wallet:</span><br>
+          <span class="allowed-wallet">61SRJwucN5iBHemrBTNEqkXAJHNgjTN16Nt1SVFBNJuf</span>
+        </div>
+        <button class="btn" id="gateConnectBtn" style="margin-top: 16px;" type="button">
+          <img src="/phantom.svg" alt="" width="20" height="20"> Connect Phantom & Verify
+        </button>
+        <p id="authError" style="color: #e5484d; font-weight: 600; margin-top: 16px;" hidden></p>
+      </div>
+
+      <!-- Unlocked Control Panel View -->
+      <div id="unlockedView" hidden>
+        <h2>Token & CA Management</h2>
+        <p style="color: var(--muted); margin-bottom: 24px;">Changes made here update the backend database instantly. Every user visiting or viewing the website will immediately see the updated CA and Pump.fun links.</p>
+
+        <div id="alertBanner" class="status-banner" hidden></div>
+
+        <form id="caForm">
+          <div class="field-group">
+            <label for="caInput">Contract Address (CA / Mint)</label>
+            <input id="caInput" placeholder="e.g. 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU" spellcheck="false" autocomplete="off" required>
+            <p class="helper">The Solana token mint address. When set, "coming soon" is replaced globally, and "Buy $PINKY" automatically points to pump.fun/coin/&lt;CA&gt;.</p>
+          </div>
+
+          <div class="field-group">
+            <label for="twitterInput">Twitter / X URL</label>
+            <input id="twitterInput" placeholder="https://x.com/pinkydotfun" spellcheck="false" autocomplete="off">
+            <p class="helper">The official Twitter/X account link displayed in the navigation.</p>
+          </div>
+
+          <div class="field-group">
+            <label for="buyUrlInput">Custom Buy URL (Optional)</label>
+            <input id="buyUrlInput" placeholder="Leave blank to auto-use pump.fun/coin/<CA>" spellcheck="false" autocomplete="off">
+            <p class="helper">Leave blank to automatically link to pump.fun using the CA above.</p>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 28px;">
+            <button class="btn grow" id="saveBtn" type="submit">Save & Publish Live CA</button>
+          </div>
+        </form>
+
+        <div class="preview-box">
+          <b>Live Token Preview:</b>
+          <div>Current Live CA: <code id="previewCa" style="font-weight: 700; color: var(--fg);">-</code></div>
+          <div style="margin-top: 4px;">Buy Link Target: <a id="previewBuy" href="#" target="_blank" rel="noopener" style="text-decoration: underline; color: #027a48;">-</a></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script>
+    const AUTHORIZED_WALLET = '61SRJwucN5iBHemrBTNEqkXAJHNgjTN16Nt1SVFBNJuf';
+    const $ = (id) => document.getElementById(id);
+    let adminToken = '';
+
+    const short = (w) => (w ? w.slice(0, 4) + '…' + w.slice(-4) : '');
+
+    function toast(msg, ms = 2800) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.hidden = false;
+      clearTimeout(window._tTimer);
+      window._tTimer = setTimeout(() => (t.hidden = true), ms);
+    }
+
+    function showAlert(msg, isSuccess = true) {
+      const banner = $('alertBanner');
+      banner.textContent = msg;
+      banner.className = 'status-banner ' + (isSuccess ? 'success' : 'error');
+      banner.hidden = false;
+    }
+
+    const phantom = () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null);
+
+    async function loadCurrentConfig() {
+      try {
+        const res = await fetch('/api/admin/config', {
+          headers: { 'x-admin-token': adminToken }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          $('caInput').value = data.mint || '';
+          $('twitterInput').value = data.twitterUrl || '';
+          $('buyUrlInput').value = data.buyUrl || '';
+          updatePreview(data.mint, data.buyUrl);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function updatePreview(ca, buyUrl) {
+      $('previewCa').textContent = ca || 'None (coming soon)';
+      const target = buyUrl || (ca ? `https://pump.fun/coin/${ca}` : '#');
+      $('previewBuy').href = target;
+      $('previewBuy').textContent = target;
+    }
+
+    async function verifyAndLogin() {
+      const p = phantom();
+      $('authError').hidden = true;
+
+      if (!p) {
+        if (matchMedia('(hover: none) and (pointer: coarse)').matches) {
+          location.href = 'https://phantom.app/ul/browse/' + encodeURIComponent(location.href) + '?ref=' + encodeURIComponent(location.origin);
+        } else {
+          window.open('https://phantom.app/download', '_blank', 'noopener');
+          toast('Install Phantom, then refresh this page.', 4000);
+        }
+        return;
+      }
+
+      try {
+        const { publicKey } = await p.connect();
+        const wallet = publicKey.toString();
+
+        if (wallet !== AUTHORIZED_WALLET) {
+          $('authError').textContent = `Access Denied: Connected wallet (${short(wallet)}) is not authorized. Please switch to ${short(AUTHORIZED_WALLET)} in Phantom.`;
+          $('authError').hidden = false;
+          return;
+        }
+
+        const message = 'Sign in to PINKY Admin Panel\n\nAuthorize Contract Address updates.\n\nWallet: ' + wallet + '\nTime: ' + new Date().toISOString();
+        const { signature } = await p.signMessage(new TextEncoder().encode(message), 'utf8');
+
+        const res = await fetch('/api/admin/auth', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            wallet,
+            message,
+            signature: btoa(String.fromCharCode(...signature))
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Authentication failed');
+
+        adminToken = data.token;
+        sessionStorage.setItem('pinky:admin_token', adminToken);
+
+        $('lockedView').hidden = true;
+        $('unlockedView').hidden = false;
+        $('adminWalletLabel').textContent = short(wallet);
+        $('adminConnectBtn').classList.add('on');
+        toast('Authorized as Owner');
+
+        await loadCurrentConfig();
+      } catch (err) {
+        if (err && err.code === 4001) {
+          toast('Signature cancelled');
+        } else {
+          $('authError').textContent = err.message || 'Verification failed.';
+          $('authError').hidden = false;
+        }
+      }
+    }
+
+    $('adminConnectBtn').onclick = verifyAndLogin;
+    $('gateConnectBtn').onclick = verifyAndLogin;
+
+    $('caForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const saveBtn = $('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+      $('alertBanner').hidden = true;
+
+      const mint = $('caInput').value.trim();
+      const twitterUrl = $('twitterInput').value.trim();
+      const buyUrl = $('buyUrlInput').value.trim();
+
+      try {
+        const res = await fetch('/api/admin/config', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'x-admin-token': adminToken
+          },
+          body: JSON.stringify({ mint, twitterUrl, buyUrl })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update configuration');
+
+        showAlert('Contract Address & token configuration updated live! All site visitors will now see the new CA.', true);
+        toast('CA Updated Successfully!');
+        updatePreview(mint, buyUrl);
+      } catch (err) {
+        showAlert(err.message, false);
+        toast(err.message, 4000);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save & Publish Live CA';
+      }
+    };
+
+    // Auto reconnect if session exists
+    const savedToken = sessionStorage.getItem('pinky:admin_token');
+    if (savedToken) {
+      adminToken = savedToken;
+      fetch('/api/admin/config', { headers: { 'x-admin-token': adminToken } })
+        .then(r => {
+          if (r.ok) {
+            $('lockedView').hidden = true;
+            $('unlockedView').hidden = false;
+            $('adminWalletLabel').textContent = short(AUTHORIZED_WALLET);
+            $('adminConnectBtn').classList.add('on');
+            loadCurrentConfig();
+          } else {
+            sessionStorage.removeItem('pinky:admin_token');
+          }
+        })
+        .catch(() => {});
+    }
+  </script>
+</body>
+</html>

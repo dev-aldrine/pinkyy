@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PINKY | $PINKY</title>
+  <meta name="description" content="Post your pinky. Everyone's pinky, on one wall. $PINKY">
+  <meta property="og:title" content="PINKY | $PINKY">
+  <meta property="og:description" content="Post your pinky. Everyone's pinky, on one wall.">
+  <meta property="og:image" content="/logo.png">
+  <meta property="og:url" content="/">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="bar">
+    <a class="brand" href="/"><img src="/logo.png" alt="" width="32" height="32">PINKY</a>
+    <nav class="links">
+      <a class="pill" id="xLink" href="#" target="_blank" rel="noopener" aria-label="PINKY on X">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.2-8.3L1.8 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg>
+      </a>
+      <button class="pill" id="connectBtn" type="button"><img src="/phantom.svg" alt="" width="16" height="16"><span id="connectLabel">Connect</span></button>
+      <a class="pill dark" id="buyLink" href="#" target="_blank" rel="noopener">Buy<span class="hide-sm"> $PINKY</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-text">
+        <p class="kicker">$PINKY</p>
+        <h1>Post your pinky.</h1>
+        <p class="sub">Snap your pinky, get votes, win the fees. The pinky with the most votes every 5 minutes wins 10% of the dev fees from that round.</p>
+        <button class="btn" id="takeBtn" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.2-1.6A1 1 0 0 1 10.1 4h3.8a1 1 0 0 1 .8.4L15.9 6h1.6A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          Post your pinky
+        </button>
+        <p class="note">Camera only. No uploads, no screenshots.</p>
+        <button class="ca" id="ca" type="button" title="Copy contract address"><span class="ca-label">CA</span> <span id="caText">coming soon</span></button>
+      </div>
+      <div class="hero-art">
+        <img src="/logo.png" alt="A pinky" width="512" height="512">
+      </div>
+    </section>
+
+    <section class="steps" aria-label="How it works">
+      <div class="step">
+        <span class="step-n">1</span>
+        <h3>Post your pinky</h3>
+        <p>Open the camera and snap your pinky. Add your wallet so you can get paid. We check it's a real pinky.</p>
+      </div>
+      <div class="step">
+        <span class="step-n">2</span>
+        <h3>Get votes</h3>
+        <p>Anyone can connect <b>Phantom</b> and vote. Each wallet gets 1 vote every 2 minutes.</p>
+      </div>
+      <div class="step">
+        <span class="step-n">3</span>
+        <h3>Win the fees</h3>
+        <p>Every 5 minutes, the pinky with the most votes wins <b>10% of the dev fees</b> from that round, sent straight to its wallet.</p>
+      </div>
+    </section>
+
+    <div class="phone-card" id="phoneCard">
+      <img id="qr" alt="QR code to open PINKY on your phone" width="112" height="112">
+      <div>
+        <b>On a computer? Continue on your phone.</b>
+        <span>Point your phone's camera at this code. It opens PINKY with the camera ready.</span>
+      </div>
+    </div>
+
+    <section class="rank-wrap" id="ranking">
+      <div class="rank-head">
+        <div>
+          <h2>Pinky ranking</h2>
+          <p class="rank-sub">Most votes when the timer hits zero wins 10% of that round's dev fees. A new round starts every 5 minutes.</p>
+        </div>
+        <div class="rank-stats">
+          <div class="stat"><span>Round ends in</span><b id="roundLeft">–:––</b></div>
+          <div class="stat"><span>Prize</span><b id="prize">–</b></div>
+          <div class="stat"><span>Your vote</span><b id="myVote">Connect</b></div>
+        </div>
+      </div>
+      <div class="rank-grid">
+        <div>
+          <ol class="board" id="board"></ol>
+          <p class="board-empty" id="boardEmpty">No votes this round yet. Vote for a pinky on the wall below.</p>
+        </div>
+        <aside class="winners">
+          <h3>Recent winners</h3>
+          <ul id="winners"><li class="muted">No winners yet.</li></ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="wall-wrap">
+      <div class="wall-head">
+        <h2>The wall</h2>
+        <span class="count"><b id="count">0</b> <span id="countWord">pinkies</span></span>
+      </div>
+      <div class="wall" id="wall" aria-label="Everyone's pinkies"></div>
+      <p class="empty" id="empty" hidden>No pinkies yet. Be pinky #1.</p>
+      <div id="more" class="more"></div>
+    </section>
+  </main>
+
+  <footer class="foot"><img src="/logo.png" alt="" width="20" height="20"> $PINKY. Pinkies only.</footer>
+
+  <!-- camera -->
+  <div class="sheet" id="cam" hidden>
+    <div class="sheet-card">
+      <div class="sheet-top">
+        <span id="camTitle">Show us your pinky</span>
+        <button class="x" id="camClose" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="viewfinder">
+        <video id="video" playsinline muted autoplay></video>
+        <canvas id="shot" hidden></canvas>
+        <svg class="guide" id="guide" viewBox="0 0 100 100" aria-hidden="true">
+          <!-- Sleek Pinky Finger Outline Guide -->
+          <path d="M42 90 V32 a8 8 0 0 1 16 0 V90" fill="none" stroke="#fff" stroke-width="1.3" stroke-dasharray="3.5 2.5"/>
+          <rect x="45" y="24" width="10" height="13" rx="5" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="2 2" opacity=".8"/>
+        </svg>
+        <p class="hint" id="hint">Pinky inside the outline</p>
+        <div class="checking" id="checking" hidden><span class="spinner"></span>Checking it's a pinky…</div>
+        <div class="cam-error" id="camError" hidden>
+          <p id="camErrorText"></p>
+          <label class="btn small" id="nativeCam" hidden>
+            <input type="file" id="nativeInput" accept="image/*" capture="environment" hidden>
+            Open camera
+          </label>
+        </div>
+      </div>
+      <p class="reject" id="reject" hidden></p>
+      <div class="controls" id="liveControls">
+        <label class="ctl" id="uploadBtn" title="Choose photo">
+          <input type="file" id="fileInput" accept="image/*" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        </label>
+        <button class="shutter" id="snap" type="button" aria-label="Take photo"></button>
+        <button class="ctl" id="flip" type="button" title="Switch camera">
+          <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18.5 3v4h-4M5.5 21v-4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="wallet-row" id="walletRow" hidden>
+        <label for="walletInput">Payout wallet <span>(if your pinky wins, the fees go here)</span></label>
+        <input id="walletInput" placeholder="Your Solana wallet address" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <p class="wallet-connected" id="walletConnected" hidden></p>
+      </div>
+      <div class="controls review" id="reviewControls" hidden>
+        <button class="btn ghost grow" id="retake" type="button">Retake</button>
+        <button class="btn grow" id="send" type="button">Post it</button>
+      </div>
+      <p class="fine">Pinkies only. Every photo is checked before it goes on the wall.</p>
+    </div>
+  </div>
+
+  <!-- viewer -->
+  <div class="viewer" id="viewer" hidden>
+    <figure>
+      <img id="viewerImg" alt="A pinky">
+      <figcaption><span id="viewerNum"></span><a id="viewerTweet" target="_blank" rel="noopener" hidden>View on X ↗</a><button class="btn small" id="viewerVote" type="button">Vote</button></figcaption>
+    </figure>
+    <button class="x light" id="viewerClose" type="button" aria-label="Close">✕</button>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="/config.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
